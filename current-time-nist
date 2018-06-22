@@ -1,0 +1,7 @@
+#!/bin/bash
+
+TIME=$(cat </dev/tcp/time.nist.gov/13)
+UTC=$(echo "$TIME" | awk '{print$3}')   # Third field is UTC (GMT) time.
+# Exercise: modify this for different time zones.
+
+echo "UTC Time = "$UTC""

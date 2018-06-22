@@ -1,0 +1,30 @@
+#!/bin/bash
+
+MAILTO="someone@gmail.com"
+MAILFROM="support@gmail.com"
+DATA="This was sent from /dev/tcp"
+SUBJECT="Mail Relay Test"
+MAILSERVER="smtp.gmail.com"
+PORT="25"
+
+echo "Connecting to $MAILSERVER on Port $PORT";
+echo "Please wait ... "
+echo
+exec 3<>/dev/tcp/$MAILSERVER/$PORT 
+ 
+if [ $? -ne 0 ] ; then
+	echo
+	echo "ERROR: Cannot connect to the Mail Server";
+	echo "Please check the servername and/or the port number"
+	exit
+fi
+ 
+echo -en "HELO mail.email.com\r\n"  >&3 
+echo -en "MAIL FROM:$MAILFROM\r\n" >&3
+echo -en "RCPT TO:$MAILTO\r\n" >&3
+echo -en "DATA\r\n" >&3
+echo -en "Subject: $SUBJECT\r\n\r\n" >&3
+echo -en "$DATA\r\n" >&3
+echo -en ".\r\n" >&3
+echo -en "QUIT\r\n" >&3
+cat <&3

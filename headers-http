@@ -1,0 +1,8 @@
+#!/bin/bash
+# prints headers for url
+
+server=${1:-google.com}; port=${2:-80}
+exec 5<> /dev/tcp/$server/$port
+echo -e "HEAD / HTTP/1.0\nHost: ${server}\n\n" >&5;
+cat 0<&5;
+exec 5>&-

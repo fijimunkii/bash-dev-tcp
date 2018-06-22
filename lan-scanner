@@ -1,0 +1,17 @@
+#!/bin/bash
+IPS=$(ifconfig \
+  | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' \
+  | grep -Eo '([0-9]*\.){3}[0-9]*' \
+  | grep -v '127.0.0.1')
+IPS=(${IPS//$'\n'/ })
+for ip in "${IPS[@]}"
+do
+  iprange=$(echo $ip | sed 's/\.[^.]*$//') 
+  echo "PORT            HOST"
+  for ihost in {1..254}; do
+    for port in {22,80,8080,3389,443,53,67,68}; do
+      bash -c "echo >/dev/tcp/$iprange.$ihost/$port" 2>/dev/null \
+        && echo "$port    $iprange.$ihost"
+    done
+  done
+done
